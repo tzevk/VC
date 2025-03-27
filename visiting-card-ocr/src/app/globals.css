@@ -1,26 +1,434 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* 1. Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html,
+body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at 30% 20%, #64126d, #86288f);
+  overflow: hidden;
+  position: relative;
+  color: #1e1e1e;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Toast Notification */
+.toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.25);
+  color: #22c55e;
+  padding: 0.85rem 1.2rem;
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+  z-index: 9999;
+  animation: fadeInOut 3s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Modal Card */
+.modal-card {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  max-width: 600px;
+  width: 90%;
+  color: #ffffff;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: slideUpFade 0.4s ease-out;
+}
+
+.modal-card h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.modal-card .field-label {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.modal-card .modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+@keyframes slideUpFade {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 2. Animated Background Blobs */
+body::before,
+body::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.2;
+  z-index: 0;
+  animation: moveBlob 18s ease-in-out infinite alternate;
+}
+
+body::before {
+  top: 10%;
+  left: 10%;
+  width: 320px;
+  height: 320px;
+  background: #ffffff;
+  animation-delay: 0s;
+}
+
+body::after {
+  bottom: 10%;
+  right: 5%;
+  width: 280px;
+  height: 280px;
+  background: #ffffff;
+  animation-delay: 5s;
+}
+
+@keyframes moveBlob {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.1); }
+  100% { transform: translate(-20px, 20px) scale(1); }
+}
+
+/* 3. Upload Card */
+.upload-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 94%;
+  max-width: 720px;
+  padding: 3rem 2.5rem;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 10px 25px rgba(255, 255, 255, 0.1),
+    0 25px 60px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+  animation: fadeCardIn 1s ease forwards;
+}
+
+@keyframes fadeCardIn {
+  0% { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.upload-container:hover {
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 12px 28px rgba(255, 255, 255, 0.12),
+    0 32px 80px rgba(0, 0, 0, 0.3);
+}
+.toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.25);
+  color: #22c55e;
+  padding: 0.85rem 1.2rem;
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+  z-index: 9999;
+  animation: fadeInOut 3s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* 4. Typography */
+.upload-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.upload-subtitle {
+  font-size: 0.95rem;
+  color: #dddddd;
+  margin-bottom: 2rem;
+}
+
+/* 5. Dropzone */
+.upload-dropzone {
+  border: 1.5px dashed rgba(255, 255, 255, 0.4);
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.021);
+  transition: all 0.3s ease;
+}
+
+.upload-dropzone.active {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.drop-label,
+.drop-separator {
+  font-size: 0.9rem;
+  color: #e0e0e0;
+}
+
+/* 6. File icon */
+.floating-icon {
+  animation: float 2.5s ease-in-out infinite;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* 7. Hidden input */
+.upload-hidden {
+  display: none;
+}
+
+/* 8. Browse button */
+.upload-button {
+  margin-top: 1rem;
+  display: inline-block;
+  padding: 0.6rem 1.4rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-weight: 500;
+  border-radius: 1.25rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+.upload-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* 9. Title Input */
+.title-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  backdrop-filter: blur(8px);
+}
+
+.title-input::placeholder {
+  color: #cccccc;
+}
+
+/* 10. Selected File Text */
+.upload-selected {
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  color: #e0e0e0;
+}
+
+/* 11. Spinner */
+.upload-spinner {
+  margin: 1.5rem auto;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top: 4px solid #ffffff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 12. Alerts */
+.alert {
+  margin-top: 1.5rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  width: 100%;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.alert.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.alert.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* 13. Upload Submit Button */
+.upload-submit {
+  margin-top: 2rem;
+  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.upload-submit:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* 14. Extracted Output Styling */
+.upload-result {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.upload-output {
+  margin-top: 1rem;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  color: #eeeeee;
+  line-height: 1.6;
+  font-size: 0.92rem;
+  font-weight: 400;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.field-label {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+@media screen and (max-width: 768px) {
+  .upload-container {
+    max-width: 95%;
+    padding: 2rem;
+    border-radius: 1rem;
+  }
+  .upload-title {
+    font-size: 1.4rem;
+  }
+  .upload-subtitle {
+    font-size: 0.85rem;
+  }
+  .upload-dropzone {
+    padding: 2rem 1rem;
+    border-radius: 0.85rem;
+  }
+  .upload-button,
+  .upload-submit,
+  .title-input {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
+  }
+  .upload-selected,
+  .drop-label,
+  .drop-separator {
+    font-size: 0.85rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media screen and (max-width: 480px) {
+  .upload-title {
+    font-size: 1.25rem;
+  }
+  .upload-subtitle {
+    font-size: 0.8rem;
+  }
+  .floating-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+  .upload-container {
+    padding: 1.5rem;
+  }
 }
